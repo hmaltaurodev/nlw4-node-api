@@ -14,11 +14,11 @@ createConnection();
 const app = express();
 app.use(express.json());
 
-app.use(userRouter);
-app.use(surveyRouter);
-app.use(sendMailRouter);
-app.use(answerRouter);
-app.use(npsRouter);
+app.use('/users', userRouter);
+app.use('/surveys', surveyRouter);
+app.use('/sendMail', sendMailRouter);
+app.use('/answers', answerRouter);
+app.use('/nps', npsRouter);
 
 app.get('/hello_world', (req, res) => {
     return res.status(200).json({

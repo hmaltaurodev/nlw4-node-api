@@ -4,6 +4,6 @@ import { AnswerController } from '../controllers/AnswerController';
 const answerRouter = Router();
 const answerController = new AnswerController();
 
-answerRouter.get('/answers/:value', answerController.execute);
+answerRouter.get('/:value', answerController.execute);
 
 export { answerRouter };

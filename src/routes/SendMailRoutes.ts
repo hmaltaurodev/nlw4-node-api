@@ -4,6 +4,6 @@ import { SendMailController } from '../controllers/SendMailController';
 const sendMailRouter = Router();
 const sendMailController = new SendMailController();
 
-sendMailRouter.post('/sendMail', sendMailController.execute);
+sendMailRouter.post('/', sendMailController.execute);
 
 export { sendMailRouter };

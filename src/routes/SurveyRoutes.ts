@@ -4,7 +4,7 @@ import { SurveyController } from '../controllers/SurveyController';
 const surveyRouter = Router();
 const surveyController = new SurveyController();
 
-surveyRouter.get('/surveys', surveyController.show);
-surveyRouter.post('/surveys', surveyController.create);
+surveyRouter.get('/', surveyController.show);
+surveyRouter.post('/', surveyController.create);
 
 export { surveyRouter };
