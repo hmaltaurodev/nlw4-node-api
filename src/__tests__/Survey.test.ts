@@ -1,13 +1,18 @@
 import request from 'supertest';
-import { getCustomRepository } from 'typeorm';
+import { getConnection } from 'typeorm';
 import { app } from '../app';
 import createConnection from '../database';
-import { SurveysRepository } from '../repositories/SurveysRepository';
 
 describe('Surveys', () => {
     beforeAll(async () => {
         const connection = await createConnection();
         await connection.runMigrations();
+    });
+
+    afterAll(async () => {
+        const connection = getConnection();
+        await connection.dropDatabase();
+        await connection.close();
     });
 
     it('Should be able to create a new survey', async () => {
@@ -30,10 +35,5 @@ describe('Surveys', () => {
 
         expect(res.status).toBe(200);
         expect(res.body.length).toBe(2);
-    });
-
-    afterAll(async () => {
-        const surveysRepository = getCustomRepository(SurveysRepository);
-        await surveysRepository.clear();
     });
 });

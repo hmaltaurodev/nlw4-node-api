@@ -1,13 +1,18 @@
 import request from 'supertest';
-import { getCustomRepository } from 'typeorm';
+import { getConnection } from 'typeorm';
 import { app } from '../app';
 import createConnection from '../database';
-import { UsersRepository } from '../repositories/UsersRepository';
 
 describe('Users', () => {
     beforeAll(async () => {
         const connection = await createConnection();
         await connection.runMigrations();
+    });
+
+    afterAll(async () => {
+        const connection = getConnection();
+        await connection.dropDatabase();
+        await connection.close();
     });
 
     it('Should be able to create a new user', async () => {
@@ -25,11 +30,6 @@ describe('Users', () => {
             email: 'user@example.com'
         });
 
-        expect(res.status).toBe(400);
-    });
-
-    afterAll(async () => {
-        const usersRepository = getCustomRepository(UsersRepository);
-        await usersRepository.clear();
+        expect(res.status).toBe(403);
     });
 });
