@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
 import { getCustomRepository } from 'typeorm';
 import * as yup from 'yup';
+import { AppError } from '../errors/AppError';
+import { ValidateError } from '../errors/ValidateError';
 import { UsersRepository } from '../repositories/UsersRepository';
 
 class UserController {
     
     async create(req: Request, res: Response) {
-        const { name, email } = req.body;
-
         const schema = yup.object().shape({
             name: yup.string().required(),
             email: yup.string().email().required()
@@ -16,23 +16,17 @@ class UserController {
         try {
             await schema.validate(req.body, { abortEarly: false });
         }
-        catch (err) {
-            return res.status(422).json({
-                message: 'Invalid data!',
-                error: err
-            });
+        catch (error) {
+            throw new ValidateError('Invalid data', 422, error);
         }
 
+        const { name, email } = req.body;
         const usersRepository = getCustomRepository(UsersRepository);
         const userAlradyExists = await usersRepository.findOne({
             email
         });
 
-        if (userAlradyExists) {
-            return res.status(400).json({
-                error: 'User already exists!'
-            });
-        }
+        if (userAlradyExists) throw new AppError('User already exists', 403);
 
         const user = usersRepository.create({
             name,
@@ -40,7 +34,6 @@ class UserController {
         });
 
         await usersRepository.save(user);
-
         return res.status(201).json(user);
     }
 }

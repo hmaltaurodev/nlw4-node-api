@@ -1,6 +1,7 @@
 import { getCustomRepository } from 'typeorm';
 import { Request, Response } from "express";
 import { SurveysUsersRepository } from '../repositories/SurveysUsersRepository';
+import { AppError } from '../errors/AppError';
 
 class AnswerController {
     
@@ -13,11 +14,7 @@ class AnswerController {
             id: String(id)
         });
 
-        if (!surveyUser) {
-            return res.status(404).json({
-                error: 'Survey User not found!'
-            });
-        }
+        if (!surveyUser) throw new AppError('Survey User not found', 404);
 
         surveyUser.value = Number(value);
         await surveysUsersRepository.save(surveyUser);

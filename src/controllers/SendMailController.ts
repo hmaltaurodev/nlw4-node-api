@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { resolve } from 'path';
 import { getCustomRepository } from 'typeorm';
+import { AppError } from '../errors/AppError';
 import { SurveysRepository } from '../repositories/SurveysRepository';
 import { SurveysUsersRepository } from '../repositories/SurveysUsersRepository';
 import { UsersRepository } from '../repositories/UsersRepository';
@@ -19,21 +20,13 @@ class SendMailController {
             email
         });
 
-        if (!userExists) {
-            return res.status(404).json({
-                error: 'User not found!'
-            });
-        }
+        if (!userExists) throw new AppError('User not found', 404);
 
         const surveyExists = await surveysRepository.findOne({
             id: survey_id
         });
         
-        if (!surveyExists) {
-            return res.status(404).json({
-                error: 'Survey not found!'
-            });
-        }
+        if (!surveyExists) throw new AppError('Survey not found', 404);
         
         const surveyUserExists = await surveysUsersRepository.findOne({
             where: { user_id: userExists.id, value: null },
